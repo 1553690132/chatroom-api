@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+<h1 class="ids"></h1>
+
+<div class="input-area">
+    <ul class="message">
+        <li>public message</li>
+    </ul>
+    <input type="text" class="open">
+    <button class="send">send</button>
+    <br/>
+    <ul class="message-room">
+        <li>private message</li>
+    </ul>
+    <input type="text" class="room">
+    <br/>
+    <input type="text" class="pri_id">
+    <button class="send-room">send</button>
+
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const ul = document.querySelector('.message')
+    const socket = io()
+
+    socket.on('connect', () => {
+        document.querySelector('.ids').innerHTML = socket.id
+    })
+
+    //公开发布
+    document.querySelector('.send').addEventListener('click', () => {
+        socket.emit('send-msg', document.querySelector('.open').value)
+    })
+    socket.on('receive-msg', (message) => {
+        ul.insertAdjacentHTML('beforeend', `<li>${message}</li>`)
+    })
+    //私人发布
+    document.querySelector('.send-room').addEventListener('click', () => {
+        socket.emit('send-room-msg', document.querySelector('.room').value, document.querySelector('.pri_id').value)
+    })
+    socket.on('receive-private-msg', (message) => {
+        document.querySelector('.message-room').insertAdjacentHTML('beforeend', `<li>${message}</li>`)
+    })
+
+</script>
+</body>
+
+</html>
