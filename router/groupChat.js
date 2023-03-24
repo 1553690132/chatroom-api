@@ -5,4 +5,8 @@ router.get('/gain', groupChat_handler.gainGroupChat)
 
 router.post('/send', groupChat_handler.sendGroupMsg)
 
+router.post('/create', groupChat_handler.createGroupChat)
+
+router.post('/join', groupChat_handler.joinGroup)
+
 module.exports = router

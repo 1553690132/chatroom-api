@@ -10,7 +10,6 @@ const FriendModel = require('../models/FriendModel')
 
 exports.regUser = (req, res) => {
     const userinfo = req.body
-    console.log(req.body)
     if (!userinfo.username || !userinfo.password) {
         return res.sends('用户名或密码不能为空!')
     }

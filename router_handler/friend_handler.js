@@ -6,9 +6,9 @@ exports.increaseFriend = async (req, res) => {
     const {_id, friendName} = {...req.body}
     try {
         const {uid} = await IDComparisonModel.findOne({username: friendName})
-        if (_id === uid) return res.sends('不可以添加自己为好友!', 400)
+        if (_id === uid) return res.sends('不可以添加自己为好友!')
         const {fid} = await FriendModel.findOne({uid: _id}, {fid: {$elemMatch: {id: uid}}})
-        if (fid.length) return res.sends('对方已经是您的好友了!', 400)
+        if (fid.length) return res.sends('对方已经是您的好友了!')
         await FriendModel.updateOne({uid: _id}, {
             $push: {
                 fid: {

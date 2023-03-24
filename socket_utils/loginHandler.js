@@ -9,7 +9,6 @@ module.exports = (io, socket) => {
     }
 
     const privateChat = (data) => {
-        console.log(data)
         io.sockets.sockets.forEach(iss => {
             if (iss.uid === data.rid) {
                 //转发至接收方room

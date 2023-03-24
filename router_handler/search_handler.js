@@ -1,5 +1,6 @@
 const UserModel = require('../models/UserModel')
 const InfoModel = require('../models/InfoModel')
+const GroupChatInfoModel = require('../models/GroupChatInfo')
 
 exports.searchPeople = (req, res) => {
     const {searchCondition} = req.query
@@ -27,5 +28,11 @@ exports.searchPeople = (req, res) => {
 }
 
 exports.searchGroup = (req, res) => {
-
+    const {searchCondition} = req.query
+    GroupChatInfoModel.find({groupName: searchCondition}).then(result => {
+        if (!result) return res.sends('暂无数据')
+        res.sends(result, 200)
+    }).catch(err => {
+        res.sends(err.message)
+    })
 }
