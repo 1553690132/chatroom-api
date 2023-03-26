@@ -12,8 +12,10 @@ router.post('/send',chatMsgHandler.sendMessage)
 //发送文件
 router.post('/file', chatMsgHandler.sendFile)
 
-router.post('/hide', chatMsgHandler.hideMessage)
+router.put('/hide', chatMsgHandler.hideMessage)
 
 router.post('/reading', chatMsgHandler.toggleRead)
+
+router.delete('/delete', chatMsgHandler.deleteMessage)
 
 module.exports = router

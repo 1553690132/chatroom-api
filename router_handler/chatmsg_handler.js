@@ -69,7 +69,24 @@ async function sendMsg(req, res, sid, rid, chats) {
 
 //隐藏聊天
 exports.hideMessage = (req, res) => {
+    const {uid, fid} = {...req.body}
+    FriendModel.updateOne({uid, "fid.id": fid}, {$set: {"fid.$.isShow": false}}).then(result => {
+        res.sends('success', 200)
+    }).catch(err => {
+        res.sends(err)
+    })
+}
 
+//删除聊天（信息）
+exports.deleteMessage = async (req, res) => {
+    const {sid, rid} = req.query
+    try {
+        await ChatMsgModel.updateOne({sid, rid}, {$set: {chats: []}})
+        await FriendModel.updateOne({uid: sid, "fid.id": rid}, {$set: {"fid.$.isShow": false}})
+        res.sends('success', 200)
+    } catch (err) {
+        res.sends(err.message)
+    }
 }
 
 //判断消息类型

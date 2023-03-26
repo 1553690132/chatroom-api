@@ -51,7 +51,7 @@ exports.sendMessageTo = async (req, res) => {
     try {
         const {uid: fid} = await IDComparisonModel.findOne({username: friendName})
         await FriendModel.updateOne({
-            uid: uid,
+            uid,
             "fid.id": fid
         }, {$set: {"fid.$.isShow": true, "fid.$.lastTime": new Date().getTime()}})
         return res.sends('success', 200)

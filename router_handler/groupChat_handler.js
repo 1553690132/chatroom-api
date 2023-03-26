@@ -115,3 +115,12 @@ exports.inviteMember = async (req, res) => {
         res.sends(err.message)
     }
 }
+
+exports.hideGroupMessage = (req, res) => {
+    const {gid} = req.body, username = req.user.username
+    GroupChatModel.updateOne({username, "groupChats.gid": gid}, {$set: {"groupChats.$.isShow": false}}).then(result => {
+        res.sends('success', 200)
+    }).catch(err => {
+        res.sends(err.message)
+    })
+}
