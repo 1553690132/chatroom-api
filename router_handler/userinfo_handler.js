@@ -31,8 +31,11 @@ const getFriendList = async (uid) => {
             fri._doc.lastTime = result.fid[i].lastTime
             fri._doc.lastMsg = result.fid[i].lastMsg
             //更新状态
-            result.fid[i].isread = await gainChatStatus(result.fid[i].id, uid)
+            const {unread, unreadNum} = await gainChatStatus(result.fid[i].id, uid)
+            result.fid[i].isread = unread
+            result.fid[i].unreadNum = unreadNum
             fri._doc.isread = result.fid[i].isread
+            fri._doc.unreadNum = result.fid[i].unreadNum
             if (result.fid[i].isShow) chatFriendList.push(fri) // 导出正在消息表显示的好友
             friendList.push(fri)
         }
@@ -42,5 +45,7 @@ const getFriendList = async (uid) => {
 
 const gainChatStatus = async (sid, rid) => {
     const ans = await ReadMessageModel.findOne({sid, rid})
-    return ans ? ans.unread : true
+    return ans ? {unread: ans.unread, unreadNum: ans.unreadNum} : {unread: true, unreadNum: 0}
 }
+
+

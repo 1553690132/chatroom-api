@@ -78,7 +78,7 @@ function determineMessageType(message) {
         case 0 :
             return message.msg
         case 1 :
-            if (message.extend.imgType == 1) return '表情包'
+            if (message.extend.imgType === 1) return '表情包'
             else return '图片'
         case 2 :
             return '文件'
@@ -97,7 +97,7 @@ async function changeStatus(sid, rid) {
 async function unreadChange(sid, rid) {
     const ans = await ReadMessageModel.findOne({sid, rid})
     if (ans) {
-        await ReadMessageModel.updateOne({sid, rid}, {unread: false})
+        await ReadMessageModel.updateOne({sid, rid}, {unread: false, unreadNum: ans.unreadNum + 1})
     } else {
         await new ReadMessageModel({sid, rid}).save()
     }
@@ -105,7 +105,7 @@ async function unreadChange(sid, rid) {
 
 exports.toggleRead = (req, res) => {
     const {sid, rid} = {...req.body}
-    ReadMessageModel.updateOne({sid, rid}, {unread: true}).then(result => {
+    ReadMessageModel.updateOne({sid, rid}, {unread: true, unreadNum: 0}).then(result => {
         res.sends('success', 200)
     }).catch(err => {
         res.sends(err.message)

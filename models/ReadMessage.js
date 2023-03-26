@@ -19,6 +19,10 @@ const ReadMessageSchema = new mongoose.Schema({
     unread: {
         type: Boolean,
         default: false
+    },
+    unreadNum: {
+        type: Number,
+        default: 0
     }
 })
 

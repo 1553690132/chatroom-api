@@ -20,6 +20,10 @@ const GroupChatSchema = new mongoose.Schema({
         chatName: {
             type: String,
             trim: true
+        },
+        isShow: {
+            type: Boolean,
+            default: false
         }
     }
 })

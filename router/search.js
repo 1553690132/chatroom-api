@@ -5,4 +5,6 @@ router.get('/people', search_handler.searchPeople)
 
 router.get('/group', search_handler.searchGroup)
 
+// router.get('/users', search_handler.searchUserFriendAndGroup)
+
 module.exports = router

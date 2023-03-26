@@ -9,4 +9,10 @@ router.post('/create', groupChat_handler.createGroupChat)
 
 router.post('/join', groupChat_handler.joinGroup)
 
+router.get('/find', groupChat_handler.findGroupById)
+
+router.post('/show', groupChat_handler.showGroupChat)
+
+router.post('/invite', groupChat_handler.inviteMember)
+
 module.exports = router

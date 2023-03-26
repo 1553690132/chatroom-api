@@ -36,3 +36,8 @@ exports.searchGroup = (req, res) => {
         res.sends(err.message)
     })
 }
+
+// exports.searchUserFriendAndGroup = (req, res) => {
+//     const {content} = req.query, username = req.user.username
+//
+// }

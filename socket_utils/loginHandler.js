@@ -4,7 +4,6 @@ module.exports = (io, socket) => {
     //处理登录后操作
     const logins = async (uid) => {
         socket.uid = uid
-        console.log('用户登录', uid)
         await UserModel.findByIdAndUpdate(uid, {online: true})
     }
 
