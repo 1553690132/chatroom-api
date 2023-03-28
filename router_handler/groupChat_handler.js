@@ -3,6 +3,8 @@ const {v4: uuidv4} = require('uuid')
 const GroupChatModel = require('../models/GroupChatModel')
 const GroupChatInfo = require('../models/GroupChatInfo')
 const UserModel = require('../models/UserModel')
+const IDComparisonModel = require('../models/IDComparisonModel')
+const notice_handler = require('../router_handler/notice_handler')
 
 //获取群组信息
 exports.gainGroupChat = (req, res) => {
@@ -61,6 +63,8 @@ exports.createGroupChat = async (req, res) => {
         }).save()
         for (const username of groupMembers) {
             await GroupChatModel.updateOne({username}, {$push: {groupChats: {gid, isShow: true}}})
+            const {uid} = await IDComparisonModel.findOne({username})
+            notice_handler.addNotice(uid, `您已被${req.user.username}邀请加入群聊${groupName}!`)
         }
         res.sends('success', 200)
     } catch (err) {
@@ -99,8 +103,9 @@ exports.showGroupChat = (req, res) => {
     })
 }
 
+//邀请进群
 exports.inviteMember = async (req, res) => {
-    const {gid, members} = {...req.body}
+    const {gid, members, groupName} = {...req.body}
     const groupMembers = []
     for (const groupMember of JSON.parse(members)) {
         groupMembers.push(groupMember.username)
@@ -109,6 +114,8 @@ exports.inviteMember = async (req, res) => {
         for (const username of groupMembers) {
             await GroupChatInfo.updateOne({gid}, {$push: {groupMembers: username}})
             await GroupChatModel.updateOne({username}, {$push: {groupChats: {gid, isShow: true}}})
+            const {uid} = await IDComparisonModel.findOne({username})
+            notice_handler.addNotice(uid, `您已被${req.user.username}邀请加入群聊${groupName}!`)
         }
         res.sends('success', 200)
     } catch (err) {
@@ -123,4 +130,16 @@ exports.hideGroupMessage = (req, res) => {
     }).catch(err => {
         res.sends(err.message)
     })
+}
+
+exports.deleteGroupChat = async (req, res) => {
+    const {uid, gid, groupName} = req.query, username = req.user.username
+    try {
+        await GroupChatModel.updateOne({username}, {$pull: {groupChats: {gid}}})
+        await GroupChatInfo.updateOne({gid}, {$pull: {groupMembers: username}})
+        notice_handler.addNotice(uid, `您已成功退出群聊 ${groupName}`)
+        res.sends('success', 200)
+    } catch (err) {
+        res.sends(err.message)
+    }
 }

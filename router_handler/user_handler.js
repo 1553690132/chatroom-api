@@ -7,6 +7,8 @@ const InfoModel = require('../models/InfoModel')
 const IDComparison = require("../models/IDComparisonModel");
 const FriendGroupModel = require("../models/FriendGroup");
 const FriendModel = require('../models/FriendModel')
+const NoticeModel = require('../models/NoticeModel')
+const GroupChatModel = require('../models/GroupChatModel')
 
 exports.regUser = (req, res) => {
     const userinfo = req.body
@@ -21,10 +23,13 @@ exports.regUser = (req, res) => {
         //加密用户密码
         userinfo.password = bcrypt.hashSync(userinfo.password, 10)
         UserModel({...userinfo}).save().then(async () => {
+            const {_id: uid} = await UserModel.findOne({username: userinfo.username})
             addNewInformation(userinfo.username)
-            await addIDComparison(userinfo.username)
+            addIDComparison(userinfo.username, uid)
             addFriendGroup(userinfo.username)
-            await addFriend(userinfo.username)
+            addFriend(uid)
+            addNotice(uid)
+            addGroupChat(userinfo.username)
             return res.sends('注册成功!', 200)
         }).catch(err => {
             return res.sends(err)
@@ -75,13 +80,10 @@ function addNewInformation(username) {
 }
 
 //新用户添加ID对照字段
-async function addIDComparison(username) {
-    try {
-        const {_id} = await UserModel.findOne({username})
-        await new IDComparison({username, uid: _id}).save()
-    } catch (err) {
+function addIDComparison(username, uid) {
+    new IDComparison({username, uid}).save().then().catch(err => {
         throw err
-    }
+    })
 }
 
 //新用户添加列表字段
@@ -94,11 +96,22 @@ function addFriendGroup(username) {
 }
 
 //新用户添加好友字段
-async function addFriend(username) {
-    try {
-        const {_id} = await UserModel.findOne({username})
-        await new FriendModel({uid: _id}).save()
-    } catch (err) {
+function addFriend(uid) {
+    new FriendModel({uid}).save().then().catch(err => {
         throw err
-    }
+    })
+}
+
+//新用户添加提醒字段
+function addNotice(uid) {
+    new NoticeModel({uid}).save().then().catch(err => {
+        throw err
+    })
+}
+
+//新用户添加群聊字段
+function addGroupChat(username) {
+    new GroupChatModel({username}).save().then().catch(err => {
+        throw err
+    })
 }

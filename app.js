@@ -59,6 +59,9 @@ app.use('/groupChat', groupChatRouter)
 const friendRouter = require('./router/friend')
 app.use('/friend', friendRouter)
 
+const noticeRouter = require('./router/notice')
+app.use('/notice', noticeRouter)
+
 //全局错误中间件
 const joi = require('joi')
 app.use((err, req, res, next) => {

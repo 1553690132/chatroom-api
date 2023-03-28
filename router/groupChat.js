@@ -17,4 +17,6 @@ router.post('/invite', groupChat_handler.inviteMember)
 
 router.put('/hide', groupChat_handler.hideGroupMessage)
 
+router.delete('/delete', groupChat_handler.deleteGroupChat)
+
 module.exports = router

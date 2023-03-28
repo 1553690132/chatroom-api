@@ -24,9 +24,18 @@ exports.getFriendGroup = async (req, res) => {
     res.sends(groups, 200)
 }
 
-//新增、删除分组
-exports.configFriendGroup = (req, res) => {
-
+//新增分组
+exports.insertFriendGroup = (req, res) => {
+    const {divideGroupName} = {...req.body}, username = req.user.username
+    FriendGroupModel.findOne({username, groupList: divideGroupName}).then(result => {
+        if (!result) {
+            FriendGroupModel.updateOne({username}, {$push: {groupList: divideGroupName}}).then(() => {
+                res.sends('success', 200)
+            })
+        } else return res.sends('分组名已存在!')
+    }).catch(err => {
+        res.sends(err.message)
+    })
 }
 
 //改变好友分组

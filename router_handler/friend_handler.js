@@ -1,5 +1,8 @@
 const FriendModel = require('../models/FriendModel')
 const IDComparisonModel = require('../models/IDComparisonModel')
+const ChatMsgModel = require('../models/ChatMsgModel')
+const ReadMessageModel = require('../models/ReadMessage')
+const notice_handler = require('../router_handler/notice_handler')
 
 //添加好友(双向)
 exports.increaseFriend = async (req, res) => {
@@ -31,39 +34,25 @@ exports.increaseFriend = async (req, res) => {
                 }
             }
         })
+        notice_handler.addNotice(uid, `${req.user.username}已添加您为好友!`)
         res.sends('添加成功!', 200)
     } catch (err) {
         res.sends(err.message)
     }
 }
 
-exports.deleteFriend = (req, res) => {
-
+exports.deleteFriend = async (req, res) => {
+    const {uid, fid} = req.query, username = req.user.username
+    try {
+        await FriendModel.updateOne({uid}, {$pull: {fid: {id: fid}}})
+        await FriendModel.updateOne({uid: fid}, {$pull: {fid: {id: uid}}})
+        await ChatMsgModel.updateOne({sid: uid, rid: fid}, {$pull: {chats: {}}})
+        await ChatMsgModel.updateOne({sid: fid, rid: uid}, {$pull: {chats: {}}})
+        await ReadMessageModel.updateOne({sid: uid, rid: fid}, {$set: {unread: true}})
+        await ReadMessageModel.updateOne({sid: fid, rid: uid}, {$set: {unread: true}})
+        notice_handler.addNotice(fid, `${username}已删除您,这将切断你们之间的联系!`)
+        res.sends('delete success', 200)
+    } catch (err) {
+        res.sends(err.message)
+    }
 }
-
-// async function add(_id, friendName) {
-//     const {uid} = await IDComparisonModel.findOne({username: friendName})
-//     await FriendModel.updateOne({uid: _id}, {
-//         $push: {
-//             fid: {
-//                 id: uid,
-//                 lastTime: new Date().getTime(),
-//                 isShow: false,
-//                 group: '我的好友',
-//                 lastMessage: '你们已经成为好友了,现在开始聊天吧!'
-//             }
-//         }
-//     })
-// }
-//
-// add('6401bb45f5b8d5ed378c8d7e', 'Admin')
-
-// function findF(uid, _fid) {
-//     FriendModel.findOne({uid}, {fid: {$elemMatch: {id: _fid}}}).then(res => {
-//         console.log(res)
-//     }).catch(err => {
-//         console.log(err)
-//     })
-// }
-//
-// findF('6401bb71b2adc61db240c630', '6401a8ca69449341446a6434')
