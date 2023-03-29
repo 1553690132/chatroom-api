@@ -4,8 +4,8 @@ const smsClient = tencentCloud.sms.v20210111.Client
 
 const client = new smsClient({
     credential: {
-        secretId: "AKIDnQq1ygAQgqobBXfYFl4A5nIaeYGk16zi",
-        secretKey: "a4RdcNxKUQ9h2C9uY073lFVWJsDKDk6F"
+        // secretId: "AKIDnQq1ygAQgqobBXfYFl4A5nIaeYGk16zi",
+        // secretKey: "a4RdcNxKUQ9h2C9uY073lFVWJsDKDk6F"
     },
 
     region: "ap-beijing",
