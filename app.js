@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 //配置解析Token中间件
 const config = require('./config')
 const expressJWT = require('express-jwt')
-app.use(expressJWT({secret: config.jwtSecretKey, algorithms: ['HS256']}).unless({path: [/^\/api\//]})) //指定不需要进行检验的认证
+app.use(expressJWT({secret: config.jwtSecretKey, algorithms: ['HS256']}).unless({path: [/^\/api\//, /^\/code\//]})) //指定不需要进行检验的认证
 
 //导入用户注册登录模块
 const userRouter = require('./router/user')
@@ -61,6 +61,9 @@ app.use('/friend', friendRouter)
 
 const noticeRouter = require('./router/notice')
 app.use('/notice', noticeRouter)
+
+const codeRouter = require('./router/verificationCode')
+app.use('/code', codeRouter)
 
 //全局错误中间件
 const joi = require('joi')

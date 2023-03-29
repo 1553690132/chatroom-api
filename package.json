@@ -25,6 +25,7 @@
     "nodemon": "^2.0.20",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
+    "tencentcloud-sdk-nodejs": "^4.0.569",
     "uuid": "^9.0.0"
   }
 }
