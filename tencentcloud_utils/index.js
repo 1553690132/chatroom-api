@@ -4,6 +4,8 @@ const smsClient = tencentCloud.sms.v20210111.Client
 
 const client = new smsClient({
     credential: {
+        secretId: process.env.secretId,
+        secretKey: process.env.secretKey
     },
 
     region: "ap-beijing",

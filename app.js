@@ -7,6 +7,8 @@ const io = require('./socket_utils/index')(http)
 const cors = require('cors')
 app.use(cors())
 
+const dotenv = require("dotenv")
+dotenv.config()
 
 app.use(express.urlencoded({extended: false, limit: '50mb'}))
 
