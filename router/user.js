@@ -13,8 +13,6 @@ router.post('/login', expressJoi(login_pwd_schema), userHandler.login)
 
 router.post('/loginCode', expressJoi(login_code_schema), userHandler.loginByCode)
 
-router.post('/breakage', userHandler.breakage)
-
 router.put('/reset', expressJoi(reg_login_schema), userHandler.resetPwd)
 
 module.exports = router

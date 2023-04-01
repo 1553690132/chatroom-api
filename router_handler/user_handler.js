@@ -50,7 +50,7 @@ exports.login = (req, res) => {
             //bcrypt包下的compareSync方法比较加密前后密码是否一致
             res.sends('账号与密码不匹配!')
         } else if (results[0].online) {
-            res.sends('用户已登录！')
+            res.sends('用户已登录，若非本人操作请重置密码！')
         } else {
             await UserModel.updateOne({username: req.body.username}, {online: true})
             const userMsg = {username: results[0].username, nickname: results[0].nickname}
@@ -75,7 +75,7 @@ exports.loginByCode = async (req, res) => {
         const _result = await InfoModel.findOne({telephone: phone})
         if (_result) {
             const {online} = await UserModel.findOne({username: _result.username})
-            if (online) return res.sends('该用户已登录!')
+            if (online) return res.sends('该用户已登录，若非本人操作请立即修改密码！')
             await UserModel.updateOne({username: _result.username}, {online: true})
             const {uid} = IDComparison.findOne({username: _result.username})
             const userMsg = {username: _result.username}
@@ -91,12 +91,6 @@ exports.loginByCode = async (req, res) => {
     } else return res.sends('验证码不匹配，请重新获取!')
 }
 
-exports.breakage = async (req, res) => {
-    const username = Object.keys({...req.body})[0].substring(13, Object.keys({...req.body})[0].indexOf('}') - 1)
-    await UserModel.updateOne({username}, {online: false})
-    res.sends('success', 200)
-}
-
 exports.resetPwd = async (req, res) => {
     const {username, phone, code, password} = {...req.body}
     const userResult = await UserModel.findOne({username})
@@ -106,7 +100,7 @@ exports.resetPwd = async (req, res) => {
     const codeResult = VerificationCodeModel.findOne({phone, code})
     if (codeResult) {
         const resetPassword = bcrypt.hashSync(password, 10)
-        await UserModel.updateOne({username}, {password: resetPassword})
+        await UserModel.updateOne({username}, {password: resetPassword, online: false})
         return res.sends('修改成功！', 200)
     } else return res.sends('验证码错误，请速速重新获取!')
 }
