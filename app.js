@@ -67,6 +67,10 @@ app.use('/notice', noticeRouter)
 const codeRouter = require('./router/verificationCode')
 app.use('/code', codeRouter)
 
+//动态
+const trendRouter = require('./router/trends')
+app.use('/trends', trendRouter)
+
 //全局错误中间件
 const joi = require('joi')
 app.use((err, req, res, next) => {

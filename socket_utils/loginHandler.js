@@ -26,8 +26,7 @@ module.exports = (io, socket) => {
     }
 
 
-    const heartbeat = async (id) => {
-        await UserModel.updateOne({_id: id}, {online: true})
+    const heartbeat = async () => {
         let proxy = new Proxy(fids, {
             set(target, key, value) {
                 target[key] = value;
